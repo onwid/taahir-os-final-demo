@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taahir Builder OS • Demonstration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+            background: #05040f;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.04em;
+        }
+
+        .section-header {
+            font-size: 3.25rem;
+            line-height: 1.0;
+            font-weight: 700;
+            letter-spacing: -0.055em;
+        }
+
+        .glass {
+            background: rgba(10, 8, 24, 0.65);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255, 0.08);
+        }
+
+        .premium-button {
+            transition: all 0.2s cubic-bezier(0.23, 1.0, 0.32, 1);
+        }
+        
+        .premium-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .cinematic-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            filter: brightness(0.82) saturate(1.15);
+        }
+
+        .hero-overlay {
+            background: linear-gradient(
+                to bottom,
+                rgba(5,4,15,0.55) 0%,
+                rgba(5,4,15,0.75) 45%,
+                rgba(5,4,15,0.9) 100%
+            );
+            z-index: 2;
+        }
+
+        /* 3D Transforms */
+        .tilt-card {
+            transition: transform 0.45s cubic-bezier(0.23, 1.0, 0.32, 1), 
+                        box-shadow 0.45s cubic-bezier(0.23, 1.0, 0.32, 1);
+            transform-style: preserve-3d;
+            perspective: 1100px;
+        }
+        
+        .tilt-card:hover {
+            transform: perspective(900px) rotateX(6deg) rotateY(10deg) translateZ(16px);
+            box-shadow: 0 35px 60px -12px rgb(0 0 0 / 0.4);
+        }
+
+        .process-card {
+            transition: transform 0.5s cubic-bezier(0.23, 1.0, 0.32, 1), 
+                        box-shadow 0.5s cubic-bezier(0.23, 1.0, 0.32, 1);
+            transform-style: preserve-3d;
+        }
+        
+        .process-card:hover {
+            transform: perspective(850px) rotateX(5deg) rotateY(8deg) translateZ(18px);
+            box-shadow: 0 40px 70px -15px rgb(0 0 0 / 0.45);
+        }
+
+        .simulator-container {
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+        }
+
+        .three-d-text {
+            transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            display: inline-block;
+        }
+        
+        .three-d-text:hover {
+            transform: perspective(650px) rotateX(13deg) rotateY(-9deg) translateZ(38px);
+        }
+
+        .main-text {
+            font-size: clamp(3rem, 7.5vw, 5.8rem);
+            line-height: 0.9;
+            font-weight: 700;
+            letter-spacing: -0.065em;
+        }
+    </style>
+</head>
+<body class="bg-[#05040f] text-white overflow-x-hidden">
+    
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-[#05040f]/90 backdrop-blur-2xl">
+        <div class="max-w-7xl mx-auto px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-x-3">
+                    <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-fuchsia-500 flex items-center justify-center">
+                        <span class="font-display text-2xl font-bold tracking-tighter">T</span>
+                    </div>
+                    <span class="font-display text-3xl font-semibold tracking-tighter">TAHIR OS</span>
+                </div>
+                <div class="flex items-center gap-x-4">
+                    <button onclick="document.getElementById('simulator').scrollIntoView({ behavior: 'smooth' })" 
+                            class="px-6 py-2.5 text-sm font-medium rounded-3xl border border-white/20 hover:bg-white/5 transition-all">
+                        Try Simulator
+                    </button>
+                    <button onclick="activateOS()" 
+                            class="px-7 py-2.5 rounded-3xl bg-white text-[#05040f] font-semibold text-sm flex items-center gap-x-2 premium-button">
+                        <span>Activate Builder OS</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero with Video Background -->
+    <section class="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Background Video -->
+        <video class="cinematic-video" autoplay muted loop playsinline>
+            <source src="background.mp4" type="video/mp4">
+        </video>
+        
+        <div class="hero-overlay absolute inset-0 z-10"></div>
+
+        <div class="relative z-20 max-w-5xl mx-auto px-8 text-center">
+            <div class="inline-flex items-center gap-x-2 px-5 py-2 rounded-3xl bg-white/5 border border-white/10 mb-8 text-sm">
+                <div class="flex -space-x-1">
+                    <div class="w-2 h-2 bg-indigo-400 rounded-full"></div>
+                    <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                    <div class="w-2 h-2 bg-fuchsia-400 rounded-full"></div>
+                </div>
+                <span class="font-medium tracking-[0.5px] text-white/70">POWERED BY SUPER GROK + TAIR AGENTIC OS</span>
+            </div>
+
+            <h1 class="main-text text-white tracking-[-0.065em] leading-none mb-6">
+                This is the power of the<br>
+                <span class="three-d-text">taahir agentic OS</span><br>
+                <span class="three-d-text text-violet-400">× supergrok</span>
+            </h1>
+            
+            <p class="max-w-lg mx-auto text-2xl text-white/70 mb-10 tracking-tight">
+                One prompt.<br>
+                Complete architecture, build, deployment &amp; notification.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="document.getElementById('flow').scrollIntoView({ behavior: 'smooth' })" 
+                        class="px-10 py-4 rounded-3xl bg-white text-[#05040f] font-semibold text-lg flex items-center justify-center gap-x-3 premium-button">
+                    See the Agentic Flow
+                </button>
+                <button onclick="document.getElementById('simulator').scrollIntoView({ behavior: 'smooth' })" 
+                        class="px-10 py-4 rounded-3xl border border-white/30 hover:bg-white/5 font-medium text-lg flex items-center justify-center gap-x-3 transition-all">
+                    Experience One-Prompt Simulator
+                </button>
+            </div>
+        </div>
+
+        <div class="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-y-1 text-xs tracking-[2px] text-white/40">
+            <div>SCROLL TO EXPLORE</div>
+            <i class="fa-solid fa-chevron-down text-xs"></i>
+        </div>
+    </section>
+
+    <!-- The Agentic Flow -->
+    <section id="flow" class="max-w-7xl mx-auto px-8 pt-20 pb-16">
+        <div class="text-center mb-12">
+            <div class="text-indigo-400 text-sm font-bold tracking-[2px]">THE OPERATING SYSTEM</div>
+            <h2 class="section-header text-6xl tracking-[-0.05em] mt-2">The Agentic Flow</h2>
+            <p class="mt-4 text-xl text-white/60 max-w-md mx-auto">Six deliberate phases. Executed with precision from a single prompt.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4" id="process-steps">
+            <!-- Populated by JS with 3D cards -->
+        </div>
+    </section>
+
+    <!-- One Prompt Simulator -->
+    <section id="simulator" class="max-w-5xl mx-auto px-8 py-16">
+        <div class="glass simulator-container rounded-3xl border border-white/10 p-10 md:p-14">
+            <div class="max-w-2xl">
+                <div class="text-indigo-400 text-xs font-bold tracking-[1.5px] mb-2">THE LIVE DEMONSTRATION</div>
+                <h3 class="font-display text-5xl tracking-tighter">One Prompt.<br>Full Ship.</h3>
+                <p class="mt-4 text-xl text-white/70">Type any goal below. Watch the agent execute the complete pipeline — from design to live deployment and stakeholder notification.</p>
+            </div>
+
+            <div class="mt-9">
+                <textarea id="goal-input" rows="2" 
+                          class="w-full bg-[#0a0818] border border-white/10 focus:border-indigo-500 rounded-3xl px-7 py-5 text-xl placeholder:text-white/30 resize-y"
+                          placeholder="Build a stunning landing page for my new AI product..."></textarea>
+                
+                <button onclick="runFinalSimulator()" 
+                        class="mt-4 w-full py-5 rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-500 text-xl font-semibold flex items-center justify-center gap-x-3 premium-button">
+                    <span>Execute with Builder OS</span>
+                </button>
+            </div>
+
+            <!-- Simulator Output -->
+            <div id="simulator-output" class="hidden mt-8 border-t border-white/10 pt-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="font-medium flex items-center gap-x-2 text-sm">
+                        <i class="fa-solid fa-terminal text-indigo-400"></i> 
+                        <span>Agent Execution Log</span>
+                    </div>
+                </div>
+                <div id="simulator-log" class="font-mono text-sm bg-[#0a0818] border border-white/10 rounded-3xl p-7 h-80 overflow-y-auto space-y-2.5 text-white/80 leading-relaxed">
+                </div>
+                
+                <div id="sim-success" class="hidden mt-6 p-7 rounded-3xl border border-emerald-500/30 bg-emerald-950/30">
+                    <div class="flex gap-x-4">
+                        <i class="fa-solid fa-check-circle text-emerald-400 text-4xl mt-1"></i>
+                        <div class="flex-1">
+                            <div class="text-2xl font-semibold">Mission accomplished.</div>
+                            <p class="text-emerald-300/80 mt-2">The experience has been built, deployed, and the stakeholder has been notified with the live link.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proof Section -->
+    <section class="max-w-4xl mx-auto px-8 py-16 text-center border-t border-white/10">
+        <div class="max-w-lg mx-auto">
+            <p class="text-xl text-white/70">
+                This entire experience — the cinematic visuals, interactive flow, and simulator — was built and deployed from a <span class="font-semibold text-white">single prompt</span> by the Taahir Builder OS in collaboration with SuperGrok.
+            </p>
+            <div class="mt-8 text-sm text-white/40 tracking-widest">DEMONSTRATION MODE</div>
+        </div>
+    </section>
+
+    <footer class="text-center py-10 text-xs text-white/40 border-t border-white/10">
+        Taahir Builder OS • One Prompt. Infinite Leverage.
+    </footer>
+
+    <script>
+        // Process Steps Data
+        const steps = [
+            { label: "DESIGN", icon: "fa-palette", desc: "Translate the goal into clear architecture, UX direction, and visual language." },
+            { label: "ARCHITECT", icon: "fa-sitemap", desc: "Design the technical system, choose the stack, and plan scalable foundation." },
+            { label: "BUILD", icon: "fa-hammer", desc: "Execute with precision. Production-grade code with polished interactions." },
+            { label: "SHIP", icon: "fa-rocket", desc: "Version control, deploy to production, and make it live with zero manual steps." },
+            { label: "MEASURE", icon: "fa-chart-line", desc: "Track real usage and performance. Data informs the next iteration." },
+            { label: "ITERATE", icon: "fa-sync", desc: "Rapid improvement based on real feedback. Always moving forward." }
+        ];
+
+        function renderProcessSteps() {
+            const container = document.getElementById('process-steps');
+            container.innerHTML = '';
+            
+            steps.forEach((step, index) => {
+                const div = document.createElement('div');
+                div.className = `process-card tilt-card glass border border-white/10 rounded-3xl p-6 cursor-pointer hover:border-indigo-500/40 transition-all`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-x-4 mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid ${step.icon} text-2xl"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-xl tracking-tight">${step.label}</div>
+                            <div class="text-xs text-white/40 tracking-widest">PHASE 0${index + 1}</div>
+                        </div>
+                    </div>
+                    <div class="text-white/70 text-[15px] leading-snug">${step.desc}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Mouse Tilt Effect
+        function addMouseTilt() {
+            const tiltElements = document.querySelectorAll('.tilt-card, .process-card');
+            
+            tiltElements.forEach(el => {
+                el.addEventListener('mousemove', (e) => {
+                    const rect = el.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) - 0.5;
+                    const y = ((e.clientY - rect.top) / rect.height) - 0.5;
+                    
+                    const rotateX = y * -16;
+                    const rotateY = x * 20;
+                    
+                    el.style.transition = 'transform 0.08s ease-out';
+                    el.style.transform = `perspective(850px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(16px)`;
+                });
+                
+                el.addEventListener('mouseleave', () => {
+                    el.style.transition = 'transform 0.55s cubic-bezier(0.23, 1.0, 0.32, 1)';
+                    el.style.transform = 'perspective(850px) rotateX(0deg) rotateY(0deg) translateZ(0)';
+                });
+            });
+        }
+
+        // Final Simulator
+        let simRunning = false;
+
+        function runFinalSimulator() {
+            if (simRunning) return;
+            simRunning = true;
+            
+            const output = document.getElementById('simulator-output');
+            const log = document.getElementById('simulator-log');
+            const success = document.getElementById('sim-success');
+            
+            output.classList.remove('hidden');
+            success.classList.add('hidden');
+            log.innerHTML = '';
+            
+            const goal = document.getElementById('goal-input').value.trim() || "Create a premium cinematic demonstration of the Taahir Builder OS";
+            
+            const messages = [
+                `Goal received: "${goal.length > 65 ? goal.substring(0, 62) + '...' : goal}"`,
+                "Activating Taahir Builder OS protocols...",
+                "Designing cinematic system architecture and visual language...",
+                "Scaffolding premium frontend with advanced Canvas + 3D transforms...",
+                "Implementing interactive Agentic Flow with mouse tilt...",
+                "Building One-Prompt Simulator with real-time execution feedback...",
+                "Creating GitHub repository and pushing production files...",
+                "Deploying to Vercel...",
+                "Extracting live production URL...",
+                "Sending email notification to stakeholder with live link..."
+            ];
+            
+            let i = 0;
+            
+            function addMessage(msg) {
+                const el = document.createElement('div');
+                el.className = 'flex gap-x-3 text-sm';
+                el.innerHTML = `<span class="text-indigo-400/70 w-6 font-mono flex-shrink-0">[${String(i+1).padStart(2,'0')}]</span> <span>${msg}</span>`;
+                log.appendChild(el);
+                log.scrollTop = log.scrollHeight;
+            }
+            
+            function next() {
+                if (i >= messages.length) {
+                    setTimeout(() => {
+                        success.classList.remove('hidden');
+                        simRunning = false;
+                    }, 350);
+                    return;
+                }
+                
+                setTimeout(() => {
+                    addMessage(messages[i]);
+                    i++;
+                    next();
+                }, 620 + Math.random() * 380);
+            }
+            
+            next();
+        }
+
+        function activateOS() {
+            const btns = document.querySelectorAll('button');
+            btns.forEach(b => {
+                if (b.innerText.includes('Activate')) {
+                    const original = b.innerHTML;
+                    b.innerHTML = `<i class="fa-solid fa-check mr-2"></i> OS ACTIVATED`;
+                    b.style.background = 'linear-gradient(to right, #10b981, #34d399)';
+                    b.style.color = 'white';
+                    
+                    setTimeout(() => {
+                        b.innerHTML = original;
+                        b.style.background = '';
+                        b.style.color = '';
+                        document.getElementById('simulator').scrollIntoView({ behavior: 'smooth' });
+                        
+                        const input = document.getElementById('goal-input');
+                        if (input && !input.value) {
+                            input.value = "Build a premium cinematic demonstration of the Taahir Builder OS and email the link";
+                        }
+                    }, 1450);
+                }
+            });
+        }
+
+        function initialize() {
+            renderProcessSteps();
+            addMouseTilt();
+            
+            // Keyboard support
+            document.getElementById('goal-input').addEventListener('keydown', (e) => {
+                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    runFinalSimulator();
+                }
+            });
+            
+            console.log('%c[Taahir OS] Final polished demonstration initialized.', 'color:#64748b');
+        }
+
+        window.onload = initialize;
+    </script>
+</body>
+</html>
